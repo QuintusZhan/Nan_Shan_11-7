@@ -21,7 +21,7 @@ data.dropna(inplace=True)# 插值法填充
 
 pd.set_option('display.max_rows',None)
 pd.set_option('display.max_columns',None)#為了全部顯示輸出結果
-print(data.corr())#輸出connivance，0-0.3弱相关；0.3-0.6中相关；0.6-1强相关
+print(data.corr())#輸出Correlation coefficient，0-0.3弱相关；0.3-0.6中相关；0.6-1强相关
 sns.pairplot(data, x_vars=['SPX Index','DXY Curncy','USGG10YR Index'], y_vars='CNY curncy', size=5, aspect=0.8, kind='reg')  
 plt.show()#通過seaborn添加一條最佳擬合直線和95%的置信帶，size和aspect參數來調節顯示的大小和比例
 x=data.ix[:,2:10]#選取2-10列為自變量
