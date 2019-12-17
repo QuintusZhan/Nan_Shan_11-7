@@ -8,12 +8,12 @@ Created on Thu Dec 12 01:18:45 2019
  
 import pandas as pd
 
-def Get_price_data(file_name, start_time):
-    price = pd.read_excel(file_name, parse_dates = True, index_col = 'Time')
+def Get_stock_price_data(file_name, start_time):
+    stock_price = pd.read_excel(file_name, parse_dates = True, index_col = 'Time')
     # 讀取經由excel的vloopup對齊好時間的股價資料，若無收盤價vlookup將自動補前值
-    price = price[price.index > start_time]
+    stock_price = stock_price[stock_price.index > start_time]
     # 資料庫資料起於2005年，將start_time設定為您所需要的資料起始日
-    return price
+    return stock_price
 
 def Read_portfoilio(file_name):
     portfolio = pd.read_excel(file_name) 
@@ -21,7 +21,7 @@ def Read_portfoilio(file_name):
     # 獲取投組組合資訊，依序包含：代碼、名稱、權重
     
 def Calculate_portfolio_return():
-    return_ = price / price.shift(1)
+    return_ = stock_price / stock_price.shift(1)
     # 計算單一個股的淨值，設定開始計算日期為淨值等於1，如果第二天漲了5%，淨值為 1.05
     
     tickers=[str(i) + ' TT EQUITY' for i in portfolio['代碼']]
@@ -45,7 +45,7 @@ portfolio_data_name = input("輸入投組資料之檔案名：")
 
 
 
-price = Get_price_data(stock_data_name, start_date)
+stock_price = Get_stock_price_data(stock_data_name, start_date)
 portfolio = Read_portfoilio(portfolio_data_name)
 portfolio_return = Calculate_portfolio_return()
 # 我們會得到一個計算好的投組累積報酬
