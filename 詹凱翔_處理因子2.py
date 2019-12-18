@@ -5,6 +5,7 @@ Created on Thu Dec 12 02:59:39 2019
 
 @author: quintus
 """
+# 此部分為處理遺漏值，做標準化，做ICA，最後將自變數資料與應變數資料合起來（時間有對上）
 
 import pandas as pd
 import numpy as np
@@ -63,3 +64,4 @@ price = ICA()
 print(price)
 
 merge = merge_price_n_portfolio_return()
+# merge 為最後我們會拿來跑回歸的DataFrame
