@@ -167,3 +167,39 @@ y = merge[merge.columns[0]]
 y = (y - np.mean(y, axis = 0)) / np.std(y)
 # 做標準化
 y.to_excel('應變數標準化.xlsx')
+
+
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
+data=pd.read_excel('PCA過的因子.xlsx')
+x=data.ix[:,1:]#選取自變量
+df=pd.read_excel('應變數標準化.xlsx')
+y=df.ix[:,1:]#選取因變量
+#修改自變量名稱
+x.columns=['SPX Index','USGG10YR Index','USGG2YR Index','DXY Curncy','TWD Curncy','BCOMTR Index','CL1 COMB Comdty','XAU BGN Curncy']
+
+variable=pd.concat([x,y],axis=1)#合并x和y
+
+# 相关度热力图，0-0.3弱相关；0.3-0.6中相关；0.6-1强相关
+corr =x.corr()
+plt.figure(figsize = (20,5))
+ax=sns.heatmap(corr,cmap='GnBu_r',square=True, annot=True, linewidths=1,vmin=0, vmax=1)
+#通過seaborn添加一條最佳擬合直線和95%的置信帶，height和aspect參數來調節顯示的大小和比例
+sns.pairplot(variable, x_vars=['SPX Index','USGG10YR Index','USGG2YR Index','DXY Curncy','TWD Curncy','BCOMTR Index','CL1 COMB Comdty','XAU BGN Curncy'], y_vars='portfolio_price', height=5, aspect=0.8, kind='reg')
+plt.show()
+
+#回歸
+model= sm.OLS(y, sm.add_constant(x)).fit()
+print(model.summary()) #回歸結果
+print(model.params) #係數
+#線性模型的殘差通常服從正態分佈（Normal distribution），繪制殘差密度來檢查正態性
+plt.figure()
+model.resid.plot.density()
+plt.show()
+
+
+
+
