@@ -7,6 +7,7 @@ Created on Sun Dec 22 16:15:57 2019
 """
 import pandas as pd
 import numpy as np
+from sklearn.preprocessing import StandardScaler
 
 ### 下面三個用來計算投組的價格（還未換成報酬率的樣態）
 def Get_stock_price_data(file_name, start_date):
@@ -124,14 +125,6 @@ def To_return_form():
     # 將因子變成報酬型態
 
 
-def Standardize():
-
-    global merge
-    merge = (merge - np.mean(merge, axis = 0)) / np.std(merge)
-    return merge
-    # 標準化
-
-
 stock_data_name = input("輸入股價資料之檔案名：")
 start_date = input('輸入回測起始時間(如:\'2005-01-01\'):')
 portfolio_data_name = input("輸入投組資料之檔案名：")
@@ -151,6 +144,26 @@ price = Match_the_factors_data(factors_data_name, start_date)
 merge = merge_price_andn_portfolio_price()
 merge = Interpolate()
 merge = To_return_form()
-merge = Standardize()
 
-print(merge)
+factors = input('輸入選擇的因子，用‘／’分開（如SPX Index/USGG10YR Index/USGG2YR Index/DXY Curncy/TWD Curncy/BCOMTR Index/CL1 COMB Comdty/XAU BGN Curncy)：').split('/')
+
+x = merge[factors]
+x_std = StandardScaler().fit_transform(x)
+# 做標準化
+
+features = x_std.T 
+covariance_matrix = np.cov(features)
+# 取得共變異數矩陣
+eig_vals, eig_vecs = np.linalg.eig(covariance_matrix)
+# eig_vecs 就是我們要找用來轉換的矩陣
+projected_x = x_std.dot(eig_vecs.T)
+# projected_x 就是用PCA轉換過的因子
+
+pd.DataFrame(projected_x).to_excel('PCA過的因子.xlsx')
+pd.DataFrame(eig_vecs).to_excel('eig_vecs.xlsx')
+
+
+y = merge[merge.columns[0]]
+y = (y - np.mean(y, axis = 0)) / np.std(y)
+# 做標準化
+y.to_excel('應變數標準化.xlsx')
