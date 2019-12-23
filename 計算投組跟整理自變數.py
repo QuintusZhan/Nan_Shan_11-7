@@ -138,7 +138,7 @@ portfolio = Read_portfoilio(portfolio_data_name)
 portfolio_price = Calculate_portfolio_price()
 # 我們會得到一個計算好的投組價格
 
-factors_data_name = input("請輸入從Bloomberg上抓下來的因子檔案名:")
+factors_data_name = input("請輸入從Bloomberg上抓下來的因子檔案名:")#Factors data.xlsx
 price = Match_the_factors_data(factors_data_name, start_date)
 
 merge = merge_price_andn_portfolio_price()
@@ -169,6 +169,8 @@ y = (y - np.mean(y, axis = 0)) / np.std(y)
 y.to_excel('應變數標準化.xlsx')
 
 
+
+#模型回歸部分
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -200,6 +202,14 @@ plt.figure()
 model.resid.plot.density()
 plt.show()
 
-
+model.params.to_excel('係數.xlsx')#PCA之後的回歸係數
+data2=pd.read_excel('係數.xlsx',index_col=0)
+coefficient=data2.ix[1:,:]#提取非常數項
+matrix=coefficient.values#轉化為矩陣
+c2=matrix.T#轉置
+c=c2.dot(eig_vecs)#矩陣相乘，得到最終的回歸係數c
+c_data= pd.DataFrame(c)#變量類型轉化為dataframe
+c_data.columns=['SPX Index','USGG10YR Index','USGG2YR Index','DXY Curncy','TWD Curncy','BCOMTR Index','CL1 COMB Comdty','XAU BGN Curncy']
+c_data.to_excel('最終係數.xlsx')
 
 
