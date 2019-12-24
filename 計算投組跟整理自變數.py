@@ -145,7 +145,7 @@ merge = merge_price_andn_portfolio_price()
 merge = Interpolate()
 merge = To_return_form()
 
-factors = input('輸入選擇的因子，用‘／’分開（如SPX Index/USGG10YR Index/USGG2YR Index/DXY Curncy/TWD Curncy/BCOMTR Index/CL1 COMB Comdty/XAU BGN Curncy)：').split('/')
+factors = input('輸入選擇的因子，用‘／’（如SPX Index/USGG10YR Index/USGG2YR Index/DXY Curncy/TWD Curncy/BCOMTR Index/CL1 COMB Comdty/XAU BGN Curncy)：').split('/')
 
 x = merge[factors]
 x_std = StandardScaler().fit_transform(x)
