@@ -52,7 +52,20 @@ ES
 
 
 
-
+#计算日均收益,报酬率由小到大依序排列，并依照不同的信赖水准找出相对应分位数的临界报酬率。信赖水准为95%
+import sys as sy
+import tushare as ts
+import pyecharts as pye
+from sklearn import datasets as ds
+import matplotlib as mpl
+import pyecharts as pye 
+#計算Y的VaR
+df1 =df.sort_index(by='portfolio_price',ascending=True)
+df1 = pd.DataFrame(df1)
+dd =df1.sort_index(by='portfolio_price',ascending=True) 
+print(dd.head(10))
+VaR_95 = dd.quantile(0.05)
+VaR_95
 
 
 
