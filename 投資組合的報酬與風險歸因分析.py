@@ -145,9 +145,10 @@ merge = merge_price_andn_portfolio_price()
 merge = Interpolate()
 merge = To_return_form()
 
-factors = input('輸入選擇的因子，用‘／’分開（如SPX Index/USGG10YR Index/USGG2YR Index/DXY Curncy/TWD Curncy/BCOMTR Index/CL1 COMB Comdty/XAU BGN Curncy)：').split('/')
+factors = input('輸入選擇的因子，用‘／’分開（如SPX Index/USGG10YR Index/USGG2YR Index/DXY Curncy/BCOMTR Index/CL1 COMB Comdty/XAU BGN Curncy)：').split('/')
 
 x = merge[factors]
+x = x[:-1]
 x_std = StandardScaler().fit_transform(x)
 # 做標準化
 
@@ -164,6 +165,8 @@ pd.DataFrame(eig_vecs).to_excel('eig_vecs.xlsx')
 
 
 y = merge[merge.columns[0]]
+y = y.shift(-1)
+y = y[:-1]
 y = (y - np.mean(y, axis = 0)) / np.std(y)
 # 做標準化
 y.to_excel('應變數標準化.xlsx')
@@ -180,8 +183,10 @@ data=pd.read_excel('PCA過的因子.xlsx')
 x=data.ix[:,1:]#選取自變量
 df=pd.read_excel('應變數標準化.xlsx')
 y=df.ix[:,1:]#選取因變量
+
 #修改自變量名稱
-x.columns=['SPX Index','USGG10YR Index','USGG2YR Index','DXY Curncy','TWD Curncy','BCOMTR Index','CL1 COMB Comdty','XAU BGN Curncy']
+x.columns=['SPX Index','USGG10YR Index','USGG2YR Index','DXY Curncy'
+           ,'BCOMTR Index','CL1 COMB Comdty','XAU BGN Curncy']
 
 variable=pd.concat([x,y],axis=1)#合并x和y
 
@@ -189,9 +194,12 @@ variable=pd.concat([x,y],axis=1)#合并x和y
 corr =x.corr()
 plt.figure(figsize = (20,5))
 ax=sns.heatmap(corr,cmap='GnBu_r',square=True, annot=True, linewidths=1,vmin=0, vmax=1)
+
 #通過seaborn添加一條最佳擬合直線和95%的置信帶，height和aspect參數來調節顯示的大小和比例
-sns.pairplot(variable, x_vars=['SPX Index','USGG10YR Index','USGG2YR Index','DXY Curncy','TWD Curncy','BCOMTR Index','CL1 COMB Comdty','XAU BGN Curncy'], y_vars='portfolio_price', height=5, aspect=0.8, kind='reg')
+sns.pairplot(variable, x_vars=['SPX Index','USGG10YR Index','USGG2YR Index','DXY Curncy','BCOMTR Index','CL1 COMB Comdty','XAU BGN Curncy']
+    , y_vars='portfolio_price', height=5, aspect=0.8, kind='reg')
 plt.show()
+
 
 #回歸
 model= sm.OLS(y, sm.add_constant(x)).fit()
@@ -209,7 +217,8 @@ matrix=coefficient.values#轉化為矩陣
 c2=matrix.T#轉置
 c=c2.dot(eig_vecs)#矩陣相乘，得到最終的回歸係數c
 c_data= pd.DataFrame(c)#變量類型轉化為dataframe
-c_data.columns=['SPX Index','USGG10YR Index','USGG2YR Index','DXY Curncy','TWD Curncy','BCOMTR Index','CL1 COMB Comdty','XAU BGN Curncy']
+c_data.columns=['SPX Index','USGG10YR Index','USGG2YR Index','DXY Curncy'
+                ,'BCOMTR Index','CL1 COMB Comdty','XAU BGN Curncy']
 c_data.to_excel('最終係數.xlsx')
 
 
